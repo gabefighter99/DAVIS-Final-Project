@@ -1,0 +1,71 @@
+---
+title: "Exercise"
+author: "Gabriel Petrov"
+date: "13/04/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(geojsonio)
+library(leaflet)
+library(dplyr)
+library(magrittr)
+library(RColorBrewer)
+library(countrycode)
+library(reshape2)
+library(rworldmap)
+```
+
+```{r}
+
+setwd("~/Desktop/DAVIS/")
+
+cait <- read.csv("~/Downloads/CAIT Country CO2 Emissions.csv",
+                 skip = 1,
+                 stringsAsFactors = FALSE) %>%
+  dplyr::rename(CO2 = 3) %>% # Shorten the name of the third column.
+  filter(!(Country %in% c("European Union (28)", "World")) & Year == 2014) %>%
+  mutate(Country = gsub("Micronesia",
+                        "Federated States of Micronesia",
+                        Country),
+         Code = countrycode(Country, "country.name", "iso3c"))
+
+spdf <- joinCountryData2Map(cait, nameJoinColumn = "Code")
+
+# Remove Antarctica, see https://stackoverflow.com/questions/
+# 46649696/how-do-i-make-a-world-map-in-r-without-antarctica
+spdf <- subset(spdf, continent != "Antarctica")
+spdf <- spTransform(spdf, CRS = CRS("+proj=gall")) # Gall projection.
+crp <- colorRampPalette(brewer.pal(9, "YlOrBr")) # Colours for maps.
+
+
+# Cut points for turning numerical values into categories on the map.
+breaks <- c(0, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000)
+
+pal <- colorBin(crp, domain = spdf$CO2, bins = breaks)
+
+
+m <- leaflet(spdf) %>%
+  addTiles() %>%
+  addPolygons(
+  fillColor = crp(length(breaks) - 1),
+  weight = 2,
+  opacity = 1,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.7,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.7,
+    bringToFront = TRUE))
+
+m
+```
+
+```{r}
+
+```
+
