@@ -218,7 +218,7 @@ An important part of any type of data visualization in both static and interacti
 
 The function will return the corresponding colors in Hexadecimal. However, it is important to note that the following examples and exercises are able to pass in different arguments into the colors function in the following regards: a palette from the RColorBrewer package, a character vector of RGB or named colors, or the full name of a viridis palette.
 
-####colorNumeric
+##### colorNumeric
 
 `pal` can take both continuous and discrete colours, depending on how we write it. I don't believe we've ever done a map with continuous colours, but if we wanted to, our `pal` would use the function `colorNumeric()`. `colorNumeric()` takes a palette (for example one of those we know from RColorBrewer) and a domain, which is basically the range of values `pal` will be able to accept. Our domain will usually just be the variable we're measuring and colouring by. So say we wanted to colour countries by gdp, our `pal` would look something like this:
 
@@ -226,7 +226,7 @@ The function will return the corresponding colors in Hexadecimal. However, it is
 pal <- colorNumeric(palette = "Greens", domain = df$life_expectancy)
 ```
 
-####colorBin
+##### colorBin
 Most of the time in this class however, we've been using discrete colours for a continuous input. For example, we'd have a `breaks` arguments, which would give values and we'd want a different colour for every one of those "bins" between two values. For this we use -- *surprise surprise* -- `colorBin`. `colorBin`, much like `colorNumeric` takes a palette, a domain, but also the number of bins that we want. Note, however, that if you're specifying, there's this annoying default argument called `pretty = TRUE`, which will give your bins a nice rounded breaks, but not necessarily the exact number you wanted. So if you're specifying, it's probably a good idea to set `pretty` to `FALSE`. Overall, should look something like this:
 
 ```
@@ -257,6 +257,8 @@ The bulk of `leaflet()`. Pay attention now.
 Adding circles is really not that different from adding markers, especially circle markers, with the small exception that circles have their radii specified in meters. Therefore, circles are scaled to the map, so when the user zooms out, the circles become respectively smaller, while circle markers won't change.
 
 Otherwise, circles take pretty much the exact same arguments as circle markers. To plot them, we use the function `addCircles()`.
+
+Pay attention to the next example, where we use circles to visualize the population of some of the cities in the US. The radii here are a function of the population column from the data frame. 
 
 ```{r}
 cities <- read.csv(textConnection("
