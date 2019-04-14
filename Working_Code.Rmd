@@ -117,30 +117,19 @@ Leaflet supports even more customizable markers using the awesome markers leafle
 The `addAwesomeMarkers()` function is similar to `addMarkers()` function but additionally allows you to specify custom colors for the markers as well as additional icons from numerous different libraries (such as the Font Awesome, Bootstrap Glyphicons, and Ion icons icon libraries).
 
 ```{r}
-df.20 <- quakes[1:20,]
-
-getColor <- function(quakes) {
-  sapply(quakes$mag, function(mag) {
-  if(mag <= 4) {
-    "green"
-  } else if(mag <= 5) {
-    "orange"
-  } else {
-    "red"
-  } })
-}
+df <- quakes[1:10,]
 
 icons <- awesomeIcons(
-  icon = 'ios-close', # the icon argument needs to be the name of any valid icon supported by the the respective library (below two lines)
-  iconColor = 'black',
+  icon = 'close', # the icon argument needs to be the name of any valid icon supported by the the respective library (below two lines)
+  iconColor = 'white',
   library = 'ion', # The library argument has to be one of ‘ion’, ‘fa’, or ‘glyphicon’
-  markerColor = getColor(df.20)
+  markerColor = "red"
 )
 
-leaflet(df.20) %>% addTiles() %>%
+leaflet(df) %>% addTiles() %>%
   addAwesomeMarkers(~long, ~lat, icon=icons, label=~as.character(mag))
 ```
-For the sake of this project, we will be using the `ion` library. You can view the extensive list of icons here[https://ionicons.com/]. 
+Above, we used an icon from the `ion` library. You can view the extensive list of icons in the ion library  [here](https://ionicons.com/). 
 
 ##### Marker Clusters
 When there are a large number of markers on a map, you can cluster them using the argument `clusterOptions`. 
