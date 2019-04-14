@@ -2,11 +2,13 @@
 title: "Final DAVIS Project"
 author: "Chandler"
 date: "4/13/2019"
-output: html_document
+output: 
+  html_document:
+    toc: true
 ---
 
 # Introduction: 
-So far in DAVis we have created static maps, which are useful in itself for creating figures for reports and presentations. However, sometimes we may want our audience to interact with the data! This is where `leaflet` comes in - the `leaflet` package overlays your data on top of interactive maps.
+So far in DAVis we have created static maps, which are useful in itself for creating figures for reports and presentations. However, sometimes we may want our audience to interact with the data! This is where `leaflet` comes in - the `leaflet` package overlays your data on top of maps, but also makes those maps interactive.
 
 
 Leaflet is a popular interactive mapping library written in JavaScript. Leaflet enables you to build the control widget directly while using the map. Every layer you create must be added to the same map, all attributed to a “group“. Then, the control widget will allow you to switch from one group to another.
@@ -15,9 +17,10 @@ Leaflet is a popular interactive mapping library written in JavaScript. Leaflet 
 ```{r, echo = FALSE}
 #install.packages("leaflet")
 library(leaflet)
+library(magrittr)
 ```
 
-Our first example of using `leaflet()` is to map out the best city in the US: Seattle! As we learned recently, we will use the pipe operator %>% in the `magrittr` package in order to write our program most effectively. While this may not make much sense at the moment, we will explain what both `addTiles()` and `addMarkers()` means later. For now, you just need to know that we are building the images of the map thru `addTiles()` and specifying which city is the best city in the US thru its longitude and latitude coordinates and labeling it with `addMarkers()`.
+Our first example of using `leaflet()` is to map out the best city in the US: Seattle! As we learned recently, we will use the pipe operator %>% in the `magrittr` package in order to write our program most effectively. While this may not make much sense at the moment, we will explain what both `addTiles()` and `addMarkers()` means later. For now, you just need to know that we are building the images of the map through `addTiles()` and specifying which city is the best city in the US thru its longitude and latitude coordinates and labeling it with `addMarkers()`.
 ```{r}
 seattle <- leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
@@ -25,22 +28,13 @@ seattle <- leaflet() %>%
 seattle
 ```
 
-For the sake of clarity in explaining the standalone functions, without the pipe operator, the first example would have looked like this: 
-
-```{r}
-seattle <- leaflet()
-seattle <- addTiles(seattle) 
-seattle <- addMarkers(seattle, lng=-122.335167, lat=47.608013, popup="The Best City in the US!")
-seattle
-```
-Going forward, for the sake of consistency, the rest of the report will be using the pipe operator in our R scripts. 
 
 
 # The Map Widget
 
 ### `leaflet()` function
 
-The `leaflet()` function returns a Leaflet map widget, which stores a list of objects that can be modified or updated later. The map widget displays an interactive map control.
+The `leaflet()` function returns a Leaflet map widget or interface, which stores a list of objects that can be modified or updated later. The map widget displays an interactive map control.
 
 ### Initializing Options
 The map widget can be initialized with certain parameters. This is achieved by populating the options argument as shown below.
@@ -226,3 +220,64 @@ leaflet(df) %>% addTiles() %>%
 Finally, one can also add labels without the accompanying markers using the `addLabelOnlyMarkers()` function.
 
 # Lines and Shapes
+
+###Circles
+
+Adding circles is really not that different from adding markers, especially circle markers, with the small exception that circles have their radii specified in meters. Therefore, circles are scaled to the map, so when the user zooms out, the circles become respectively smaller, while circle markers won't change.
+
+Otherwise, circles take pretty much the exact same arguments as circle markers. To plot them, we use the function `addCircles()`.
+
+```{r}
+cities <- read.csv(textConnection("
+City,Lat,Long,Pop
+Boston,42.3601,-71.0589,645966
+Hartford,41.7627,-72.6743,125017
+New York City,40.7127,-74.0059,8406000
+Philadelphia,39.9500,-75.1667,1553000
+Pittsburgh,40.4397,-79.9764,305841
+Providence,41.8236,-71.4222,177994
+"))
+
+leaflet(cities) %>% addTiles() %>%
+  addCircles(lng = ~Long, lat = ~Lat, weight = 1,
+    radius = ~sqrt(Pop) * 30, popup = ~City
+  )
+```
+
+
+###Rectangles
+
+Rectangles are a little bit more clunky. As they're rectangles, they need four different long-lat values: two long (lng1 and lng2) and two lat (lat1 and lat2). Beyond that, they're not that difficult, or useful for that matter, in my opinion. So we won't spend too much time on them.
+
+```{r}
+leaflet() %>% addTiles() %>%
+  addRectangles(
+    lng1=-118.456554, lat1=34.078039,
+    lng2=-118.436383, lat2=34.062717,
+    fillColor = "transparent"
+  )
+
+```
+
+###Polygons
+
+This section is probably the most important section here and also the one we'll be using most extensively, so pay attention.
+
+All of you should be familiar with `Spatial Polygons` and `SpatialPolygonsDataFrames` (spdf) by now. The former is a function that has long lat values of a polygon (these long lat values can change based on the CRS chosen, as we've already seen in class), whilst the latter are just a data frame of several `Spatial Polygons`.
+
+Well, leaflet uses those too. Because leaflet is awesome. This allows us to create amazing chloropleth maps, just like we have done in class, but also with an interactive feature that the maps we've had exposure to in class do not have.
+
+The `addPolygons()` function takes several arguments. Among those, the ones of note are `fillColor`, `label` and `highlightOptions`. The first is fairly self-explanatory. We've done this several times in the past. There is one important and a little confusing difference however. If we wanted the polygons' colour to be the same, then that's simple, we just say `fillColor = "green"`. However, that's boring and competely useless if we have many polygons on the map, especially if we want the colour to represent something. `addPolygons()`'s `fillColor` in that case, takes an argument called `pal`. This argument is so important, I'm going to dedicate a section to it.
+
+####pal
+
+`pal` is a function that we ourselves will write, which takes a variable and maps that variable to a specific gradient of colour. So say we were plotting Life Expectancy. `pal` would take Life Expectancy as its argument and give each value of Life Expectancy for every country a specific colour.
+
+`pal` can take both continuous and discrete colours, depending on how we write it. I don't believe we've ever done a map with continuous colours, but if we wanted to, our `pal` would use the function `colorNumeric()`. `colorNumeric()` takes a palette (for example one of those we know from RColorBrewer) and a domain, which is basically the range of values `pal` will be able to accept. Our domain will usually just be the variable we're measuring and colouring by. So say we wanted to colour countries by gdp, our `pal` would look something like this:
+
+```
+pal <- colorNumeric(palette = "Blues", domain = countries$gdp_md_est)
+```
+
+Most of the time in this class however, we've been using discrete colours for a continuous input. 
+
