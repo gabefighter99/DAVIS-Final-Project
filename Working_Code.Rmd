@@ -254,7 +254,7 @@ Pay attention to the next example, where we use circles to visualize the populat
 
 cities <- read.csv(textConnection("
 City,Lat,Long,Pop
-Boston,42.3601,-71.0589,645966
+Minneapolis,42.3601,-71.0589,645966
 Hartford,41.7627,-72.6743,125017
 New York City,40.7127,-74.0059,8406000
 Philadelphia,39.9500,-75.1667,1553000
