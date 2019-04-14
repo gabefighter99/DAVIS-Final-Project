@@ -62,12 +62,11 @@ seattle
 ### Map Methods
 Below are a series of methods to manipulate the map further. 
 
-1. `setView()` sets the center of the map view and the zoom level.
+1. `setView()` sets the center of the map view and the zoom level. In our example below, you can see that the map no longer can zoom in past this starting point. Try changing the values of zoom here in order to fully understand the purpose of `setView()`. 
 
 ```{r}
 setView(seattle, lng=-122.335167, lat=47.608013, zoom = 10)
 ```
-
 
 2. `fitBounds()` fits the view into the rectangle [lng1, lat1] – [lng2, lat2]. `fitBounds()` takes the following parameters: fitBounds(map, lng1, lat1, lng2, lat2, options = list())
 
