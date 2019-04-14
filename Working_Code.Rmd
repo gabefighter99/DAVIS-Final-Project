@@ -7,7 +7,7 @@ output:
     toc: yes
 ---
 
-# Introduction: 
+# Introduction 
 So far in DAVis we have created static maps, which are useful in itself for creating figures for reports and presentations. However, sometimes we may want our audience to interact with the data! This is where `leaflet` comes in - the `leaflet` package overlays your data on top of maps, but also makes those maps interactive.
 
 
@@ -20,7 +20,7 @@ library(leaflet)
 library(magrittr)
 ```
 
-Our first example of using `leaflet()` is to map out the best city in the US: Seattle! As we learned recently, we will use the pipe operator %>% in the `magrittr` package in order to write our program most effectively. While this may not make much sense at the moment, we will explain what both `addTiles()` and `addMarkers()` means later. For now, you just need to know that we are building the images of the map through `addTiles()` and specifying which city is the best city in the US thru its longitude and latitude coordinates and labeling it with `addMarkers()`.
+Our first example of using `leaflet()` is to map out the best city in the US: Seattle! (This is a very subjective view our dear teammate Chandler holds. Very, very, very subjective). As we learned recently, we will use the pipe operator %>% in the `magrittr` package in order to write our program most effectively. We'll give you a taste of what `leaflet()` can do. While this may not make much sense at the moment, we will explain what both `addTiles()` and `addMarkers()` means later. For now, you just need to know that we are building the images of the map through `addTiles()` and specifying which city is the best city in the US through its longitude and latitude coordinates and labeling it with `addMarkers()`.
 ```{r}
 seattle <- leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
@@ -28,13 +28,14 @@ seattle <- leaflet() %>%
 seattle
 ```
 
+Cool, huh?
 
 
 # The Map Widget
 
 ### `leaflet()` function
 
-The `leaflet()` function returns a Leaflet map widget or interface, which stores a list of objects that can be modified or updated later. The map widget displays an interactive map control.
+The `leaflet()` function returns a Leaflet map widget or interface, which stores a list of objects that can be modified or updated later. The map widget displays an interactive map control. You might have noticed at this point that the `leaflet()` function is not taking any arguments for what data to use. By default, the data argument is set to `NULL`. There are two ways to tell `leaflet()` what data to use. We can either put in values longitude and latitude in the functions that follow, just like we did in the example above where we provide the information about longitude and latitude inside the function `addMarkers()`. The other way is to put a data frame as an argument inside leaflet, and in secondary functions like `addMarkers()`, we can call the latitude and longitue values from the data frame itself. We use a data frame when we have multiple points to plot. We can even use SpatialPolygons. But more on that later.
 
 ### Initializing Options
 The map widget can be initialized with certain parameters. This is achieved by populating the options argument as shown below.
@@ -53,13 +54,14 @@ The most important Map State Options in `leaflet()` are:
 
 For an extensive list of options outside the scope of this report, please click here[https://leafletjs.com/reference-1.3.0.html#map-option]. 
 
-In this example below, we change the options of the Map Widget by restricting the Maximum Zoom level of the map of the best city in the US. Try changing the value in the `minZoom` and `maxZoom` in order to see the different effect the zoom settings can have on the map.
+In this example below, we change the options of the Map Widget by restricting the Maximum Zoom level of the map of the best city in the US. Try changing the value in the `minZoom` and `maxZoom` in order to see the different effect the zoom settings can have on the map. Notice how you can't zoom in more than 8 times.
 ```{r}
 seattle <- leaflet(options = leafletOptions(minZoom = 0, maxZoom = 8)) %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
   addMarkers(lng=-122.335167, lat=47.608013, popup="The Best City in the US!")
 seattle
 ```
+
 
 ### Map Methods
 Below are a series of methods to manipulate the map further. 
@@ -69,7 +71,6 @@ Below are a series of methods to manipulate the map further.
 ```{r}
 setView(seattle, lng=-122.335167, lat=47.608013, zoom = 10)
 ```
-
 
 2. `fitBounds()` fits the view into the rectangle [lng1, lat1] – [lng2, lat2]. `fitBounds()` takes the following parameters: fitBounds(map, lng1, lat1, lng2, lat2, options = list())
 
@@ -90,8 +91,8 @@ One must add tiles to their Base Map in order to get the image of the map to be 
 In `leaflet()`, the easiest way to add tiles is by calling `addTiles()` with no arguments; by default, OpenStreetMap tiles are used. OpenStreetMap is built by a community of mappers that contribute and maintain data about roads, trails, cafés, railway stations, and much more, all over the world.
 
 ```{r}
-m <- leaflet() %>% setView(lng = -71.0589, lat = 42.3601, zoom = 12)
-m %>% addTiles()
+singapore <- leaflet() %>% setView(lng = 103.8198, lat = 1.3521, zoom = 12)
+singapore %>% addTiles()
 ```
 
 # Markers
@@ -100,7 +101,9 @@ Now that we have a great base map, we want to be able to visualize our data here
 use markers to call out points on the map. Marker locations are expressed in latitude/longitude coordinates, and can either appear as icons or as circles.
 
 ### Icon Markers
-Icon markers are added using the `addMarkers()` or the `addAwesomeMarkers()` functions. The default icon is a *dropped pin*. As with most layer functions, the popup argument can be used to add a message to be displayed on click, and the label option can be used to display a text label either on hover or statically.
+Icon markers are added using the `addMarkers()` or the `addAwesomeMarkers()` functions. We're not kidding. That's a thing.
+
+The default icon is a *dropped pin*. As with most layer functions, the popup argument can be used to add a message to be displayed on click, and the label option can be used to display a text label either on hover or statically.
 
 ```{r}
 leaflet(data = quakes[1:20,]) %>% addTiles() %>%
@@ -110,7 +113,7 @@ leaflet(data = quakes[1:20,]) %>% addTiles() %>%
 In addition to having default icons, you can also make your own icon using the `makeIcon()` function. To make a custom icon, you usually need two images — the actual icon image and the image of its shadow. However, this is out of the scope of this project. 
 
 ### Awesome Markers Leaflet Plugin.
-Leaflet supports even more customizable markers using the awesome markers leaflet plugin.
+Leaflet supports even more customizable markers using the awesome markers leaflet plugin. Told you it was a thing.
 
 The `addAwesomeMarkers()` function is similar to `addMarkers()` function but additionally allows you to specify custom colors for the markers as well as additional icons from numerous different libraries (such as the Font Awesome, Bootstrap Glyphicons, and Ion icons icon libraries).
 
@@ -151,7 +154,7 @@ leaflet(quakes) %>% addTiles() %>% addMarkers(
 )
 ```
 
-Circle markers are much like regular circles (see Lines and Shapes), except that their radius in onscreen pixels stays constant regardless of zoom level.
+Circle markers are much like regular circles (see [Lines and Shapes]), except that their radius in onscreen pixels stays constant regardless of zoom level.
 
 ```{r}
 leaflet(quakes) %>% addTiles() %>% addCircleMarkers()
@@ -163,12 +166,10 @@ Another significant addition Popups are small boxes containing arbitrary HTML, t
 
 ### Pop ups
 Use the `addPopups()` function to add a single, standalone popup to your given map.
--15.56
-167.62
 
 ```{r}
 content <- "This is where the largest quake happended in the quakes dataset!"
-leaflet() %>% addTiles() %>%
+leaflet(options = leafletOptions(minZoom = 0, maxZoom = 5)) %>% addTiles() %>%
   addPopups(167.62, -15.56, content,
     options = popupOptions(closeButton = FALSE)
   )
@@ -191,7 +192,7 @@ leaflet(df) %>% addTiles() %>%
   addMarkers(~Long, ~Lat, popup = ~htmlEscape(Name))
 ```
 
-The last argument in the above example, `htmltools::htmlEscape` was used to santize any characters in the name that might be interpreted as HTML. While we did not need it here, it is important to incldue this argument in order to ensure there is no unnecessary errors due to their being a misinterpretation of the strings. 
+The last argument in the above example, `htmltools::htmlEscape` was used to sanitize any characters in the name that might be interpreted as HTML. Don't worry too much about this.
 
 
 ### Labels
@@ -217,7 +218,7 @@ leaflet(df) %>% addTiles() %>%
 
 ```
 
-Finally, one can also add labels without the accompanying markers using the `addLabelOnlyMarkers()` function.
+Finally, one can also add labels without the accompanying markers using the `addLabelOnlyMarkers()` function. We'll go a little more in depth with them later on, when we discuss adding labels to polygons. See [Polygons].
 
 #Color
 
@@ -234,24 +235,24 @@ The function will return the corresponding colors in Hexadecimal. However, it is
 `pal` can take both continuous and discrete colours, depending on how we write it. I don't believe we've ever done a map with continuous colours, but if we wanted to, our `pal` would use the function `colorNumeric()`. `colorNumeric()` takes a palette (for example one of those we know from RColorBrewer) and a domain, which is basically the range of values `pal` will be able to accept. Our domain will usually just be the variable we're measuring and colouring by. So say we wanted to colour countries by gdp, our `pal` would look something like this:
 
 ```
-pal <- colorNumeric(palette = "Blues", domain = countries$gdp_md_est)
+pal <- colorNumeric(palette = "Greens", domain = df$life_expectancy)
 ```
 
 ####colorBin
 Most of the time in this class however, we've been using discrete colours for a continuous input. For example, we'd have a `breaks` arguments, which would give values and we'd want a different colour for every one of those "bins" between two values. For this we use -- *surprise surprise* -- `colorBin`. `colorBin`, much like `colorNumeric` takes a palette, a domain, but also the number of bins that we want. Note, however, that if you're specifying, there's this annoying default argument called `pretty = TRUE`, which will give your bins a nice rounded breaks, but not necessarily the exact number you wanted. So if you're specifying, it's probably a good idea to set `pretty` to `FALSE`. Overall, should look something like this:
 
 ```
-binpal <- colorBin("Blues", countries$gdp_md_est, 6, pretty = FALSE)
+binpal <- colorBin("Blues", df$life_expectancy, 6, pretty = FALSE)
 ```
 
 You can even use your own breaks, like so:
 
 ```
 breaks <- (0, 10, 30, 50, 100)
-binpal <- colorBin("Blues", countries$gdp_md_est, bins = breaks, pretty = FALSE)
+binpal <- colorBin("Blues", df$life_expectancy, bins = breaks, pretty = FALSE)
 ```
 
-The most observant among you will annoyingly go and say: "Wait a minute, what if we want more than 9 bins. Being the excellent, amazing student that I am, I know we can't have more than 9 bins for ColorBrewer's palletes".
+The most observant among you will annoyingly go and say: "Wait a minute, what if we want more than 9 bins? Being the excellent, amazing student that I am, I know we can't have more than 9 bins for ColorBrewer's palletes".
 
 Okay, first of all, nobody likes a show-off, don't be obnoxious. Second of all, you'll have to figure that one out on your lonesome during the exercise. Think, though: pal needs another palette, a palette that allows for more colours than 9. If only we'd done something similar in class, developed a function that would allow us to break up a palette into any desired number of colours...
 
@@ -261,7 +262,7 @@ By the way, there's also a function called `colorQuantile`, which is basically `
 
 # Lines and Shapes
 
-The bulk of leaflet. Pay attention now.
+The bulk of `leaflet()`. Pay attention now.
 
 ###Circles
 
