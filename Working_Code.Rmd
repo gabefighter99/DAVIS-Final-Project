@@ -117,30 +117,20 @@ Leaflet supports even more customizable markers using the awesome markers leafle
 The `addAwesomeMarkers()` function is similar to `addMarkers()` function but additionally allows you to specify custom colors for the markers as well as additional icons from numerous different libraries (such as the Font Awesome, Bootstrap Glyphicons, and Ion icons icon libraries).
 
 ```{r}
-df.20 <- quakes[1:20,]
-
-getColor <- function(quakes) {
-  sapply(quakes$mag, function(mag) {
-  if(mag <= 4) {
-    "green"
-  } else if(mag <= 5) {
-    "orange"
-  } else {
-    "red"
-  } })
-}
+df <- quakes[1:10,]
 
 icons <- awesomeIcons(
-  icon = 'ios-close', # the icon argument needs to be the name of any valid icon supported by the the respective library (below two lines)
-  iconColor = 'black',
+  icon = 'close', # the icon argument needs to be the name of any valid icon supported by the the respective library (below two lines)
+  iconColor = 'white',
   library = 'ion', # The library argument has to be one of ‘ion’, ‘fa’, or ‘glyphicon’
-  markerColor = getColor(df.20)
+  markerColor = "red"
 )
 
-leaflet(df.20) %>% addTiles() %>%
+leaflet(df) %>% addTiles() %>%
   addAwesomeMarkers(~long, ~lat, icon=icons, label=~as.character(mag))
 ```
-For the sake of this project, we will be using the `ion` library. You can view the extensive list of icons [here](https://ionicons.com/). 
+
+Above, we used an icon from the `ion` library. You can view the extensive list of icons in the ion library  [here](https://ionicons.com/). 
 
 ##### Marker Clusters
 When there are a large number of markers on a map, you can cluster them using the argument `clusterOptions`. 
@@ -229,7 +219,7 @@ An important part of any type of data visualization in both static and interacti
 
 The function will return the corresponding colors in Hexadecimal. However, it is important to note that the following examples and exercises are able to pass in different arguments into the colors function in the following regards: a palette from the RColorBrewer package, a character vector of RGB or named colors, or the full name of a viridis palette.
 
-####colorNumeric
+##### colorNumeric
 
 `pal` can take both continuous and discrete colours, depending on how we write it. I don't believe we've ever done a map with continuous colours, but if we wanted to, our `pal` would use the function `colorNumeric()`. `colorNumeric()` takes a palette (for example one of those we know from RColorBrewer) and a domain, which is basically the range of values `pal` will be able to accept. Our domain will usually just be the variable we're measuring and colouring by. So say we wanted to colour countries by gdp, our `pal` would look something like this:
 
@@ -237,7 +227,7 @@ The function will return the corresponding colors in Hexadecimal. However, it is
 pal <- colorNumeric(palette = "Greens", domain = df$life_expectancy)
 ```
 
-####colorBin
+##### colorBin
 Most of the time in this class however, we've been using discrete colours for a continuous input. For example, we'd have a `breaks` arguments, which would give values and we'd want a different colour for every one of those "bins" between two values. For this we use -- *surprise surprise* -- `colorBin`. `colorBin`, much like `colorNumeric` takes a palette, a domain, but also the number of bins that we want. Note, however, that if you're specifying, there's this annoying default argument called `pretty = TRUE`, which will give your bins a nice rounded breaks, but not necessarily the exact number you wanted. So if you're specifying, it's probably a good idea to set `pretty` to `FALSE`. Overall, should look something like this:
 
 ```
@@ -269,6 +259,8 @@ Adding circles is really not that different from adding markers, especially circ
 
 Otherwise, circles take pretty much the exact same arguments as circle markers. To plot them, we use the function `addCircles()`.
 
+Pay attention to the next example, where we use circles to visualize the population of some of the cities in the US. The radii here are a function of the population column from the data frame. 
+
 ```{r}
 
 cities <- read.csv(textConnection("
@@ -287,20 +279,11 @@ leaflet(cities) %>% addTiles() %>%
   )
 ```
 
+The above line of code is taken verbatim from the website listed in the sources. We thought it was a good representation and not worth our time to find new long, lat values for new cities.
 
 ### Rectangles
 
 Rectangles are a little bit more clunky. As they're rectangles, they need four different long-lat values: two long (lng1 and lng2) and two lat (lat1 and lat2). 
-
-```{r}
-leaflet() %>% addTiles() %>%
-  addRectangles(
-    lng1=-118.456554, lat1=34.078039,
-    lng2=-118.436383, lat2=34.062717,
-    fillColor = "transparent"
-  )
-
-```
 
 ### Polygons
 
@@ -379,4 +362,4 @@ In case you are wanting to explore `leaflet()` further, we wanted to give you a 
 
 #Sources
 
-Much of this code is either taken verbatim from
+Much of this code is inspired from code present [here](https://rstudio.github.io/leaflet/).
