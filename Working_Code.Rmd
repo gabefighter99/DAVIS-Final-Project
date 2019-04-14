@@ -1,7 +1,7 @@
 ---
-title: "Final DAVIS Project"
-author: "Chandler"
-date: "4/13/2019"
+title: "Leftlet() package"
+author: "Chandler, Gabriel, Swarnima, Aiman, Haaken, Terence"
+date: "4/14/2019"
 output:
   html_document:
     toc: yes
@@ -29,7 +29,6 @@ seattle
 ```
 
 Cool, huh?
-
 
 # The Map Widget
 
@@ -66,7 +65,7 @@ seattle
 ### Map Methods
 Below are a series of methods to manipulate the map further. 
 
-1. `setView()` sets the center of the map view and the zoom level.
+1. `setView()` sets the center of the map view and the zoom level. In our example below, you can see that the map no longer can zoom in past this starting point. Try changing the values of zoom here in order to fully understand the purpose of `setView()`. 
 
 ```{r}
 setView(seattle, lng=-122.335167, lat=47.608013, zoom = 10)
@@ -192,7 +191,7 @@ leaflet(df) %>% addTiles() %>%
   addMarkers(~Long, ~Lat, popup = ~htmlEscape(Name))
 ```
 
-The last argument in the above example, `htmltools::htmlEscape` was used to sanitize any characters in the name that might be interpreted as HTML. Don't worry too much about this.
+The last argument in the above example, `htmltools::htmlEscape` was used to sanitize any characters in the name that might be interpreted as HTML. While we did not need it here, it is important to incldue this argument in order to ensure there is no unnecessary errors due to their being a misinterpretation of the strings. 
 
 
 ### Labels
@@ -220,15 +219,15 @@ leaflet(df) %>% addTiles() %>%
 
 Finally, one can also add labels without the accompanying markers using the `addLabelOnlyMarkers()` function. We'll go a little more in depth with them later on, when we discuss adding labels to polygons. See [Polygons].
 
-#Color
+# Color
 
-An important part of any type of visualizations in both static and interactive maps is colors. Colors enable us to highlight different trends, identify distinct variables, and even help convey our findings more directly. While we have already studied colors in DAVis, there is a useful tool that can help you generate your own perfect color palette.
+An important part of any type of data visualization in both static and interactive maps is colors. Colors enable us to highlight different trends, identify distinct variables, and even help convey our findings more directly. While we have already studied colors in DAVis, there is a useful tool that can help you generate your own perfect color palette.
 
-###Pal
+### Pal
 
-`pal` is a function that we ourselves will write, which takes a variable and maps that variable to a specific gradient of colour. So say we were plotting Life Expectancy. `pal` would take Life Expectancy as its argument and give each value of Life Expectancy for every country a specific colour.
+`pal` is a function that we ourselves write, which takes a variable and maps that variable to a specific gradient of colour. So say we were plotting Life Expectancy. `pal` would take Life Expectancy as its argument and give each value of Life Expectancy for every country a specific colour.
 
-The function will return the corresponding colors in Hexadecimal. However, it is important to note that the following examples and exercises are able to pass in different arguments into the colors function in the following regards: a palette from the RColorBrewer package, a character vector of RGB or named colors, and the full name of a viridis palette.
+The function will return the corresponding colors in Hexadecimal. However, it is important to note that the following examples and exercises are able to pass in different arguments into the colors function in the following regards: a palette from the RColorBrewer package, a character vector of RGB or named colors, or the full name of a viridis palette.
 
 ####colorNumeric
 
@@ -256,7 +255,7 @@ The most observant among you will annoyingly go and say: "Wait a minute, what if
 
 Okay, first of all, nobody likes a show-off, don't be obnoxious. Second of all, you'll have to figure that one out on your lonesome during the exercise. Think, though: pal needs another palette, a palette that allows for more colours than 9. If only we'd done something similar in class, developed a function that would allow us to break up a palette into any desired number of colours...
 
-####Other
+##### Other
 
 By the way, there's also a function called `colorQuantile`, which is basically `colorBin`, but it splits up the input domain into subsets with an equal numbers of values. There's also `colorFactor` for categorical variables. Call me a wizard, but I don't think you'll need those for the exercise.
 
@@ -264,7 +263,7 @@ By the way, there's also a function called `colorQuantile`, which is basically `
 
 The bulk of `leaflet()`. Pay attention now.
 
-###Circles
+### Circles
 
 Adding circles is really not that different from adding markers, especially circle markers, with the small exception that circles have their radii specified in meters. Therefore, circles are scaled to the map, so when the user zooms out, the circles become respectively smaller, while circle markers won't change.
 
@@ -288,9 +287,9 @@ leaflet(cities) %>% addTiles() %>%
 ```
 
 
-###Rectangles
+### Rectangles
 
-Rectangles are a little bit more clunky. As they're rectangles, they need four different long-lat values: two long (lng1 and lng2) and two lat (lat1 and lat2). Beyond that, they're not that difficult, or useful for that matter, in my opinion. So we won't spend too much time on them.
+Rectangles are a little bit more clunky. As they're rectangles, they need four different long-lat values: two long (lng1 and lng2) and two lat (lat1 and lat2). 
 
 ```{r}
 leaflet() %>% addTiles() %>%
@@ -302,23 +301,23 @@ leaflet() %>% addTiles() %>%
 
 ```
 
-###Polygons
+### Polygons
 
 This section is probably the most important section here and also the one we'll be using most extensively, so pay attention.
 
-All of you should be familiar with `Spatial Polygons` and `SpatialPolygonsDataFrames` (spdf) by now. The former is a function that has long lat values of a polygon (these long lat values can change based on the CRS chosen, as we've already seen in class), whilst the latter are just a data frame of several `Spatial Polygons`.
+You should be familiar with `Spatial Polygons` and `SpatialPolygonsDataFrames` (spdf) from class lectures and notes. The former is a function that has long lat values of a polygon (these long lat values can change based on the CRS chosen, as we've already seen in class), whilst the latter are just a data frame of several `Spatial Polygons`.
 
-Well, leaflet uses those too. Because leaflet is awesome. This allows us to create amazing chloropleth maps, just like we have done in class, but also with an interactive feature that the maps we've had exposure to in class do not have.
+Well, leaflet uses those too (because leaflet is awesome). This allows us to create amazing chloropleth maps, just like we have done in class, but also with an interactive feature that the maps we've had exposure to in class do not have.
 
 The `addPolygons()` function takes several arguments, the important ones are `weight`, which defines how wide the border (or stroke) should be, `color` is the colour of the border (stroke), `dashArray`, is the line type of the stroke, and `opacity` is how opaque the colour of the stroke should be. So setting `opacity` to 0 will result in no border. Meanwhile, an `opacity` of 1 will mean a white border. `fillOpacity` is similar, meaning how opaque the actual polygon should be. The more complicated ones of note are `fillColor`, `label` and `highlight`.
 
-####fillColor
+##### fillColor
 
 The first is fairly self-explanatory. We've done this several times in the past. There is one important and a little confusing difference however. If we wanted the polygons' colour to be the same, then that's simple, we just say `fillColor = "green"`. However, that's boring and competely useless if we have many polygons on the map, especially if we want the colour to represent something. `addPolygons()`'s `fillColor` in that case, takes an argument called `pal`. This argument is so important, we've dedicated an entire section to it in [Color].
 
-####Labels
+##### Labels
 
-Yup, we're still not done with Polygons. Quiet, stop whining. Labels are cute and not as complicated. Say you wanted to get information about a specific polygon (or the country it represents) whenever you hovered above it. That's what labels do. For labels to be effective, you're going to have to know some basic sprintf. For the exercise there are four things you're going to have to know. You'd want your labels to take in not just "Nevada", but any name you give it. This is done with the replacement that sprintf offers. Say you wanted to input muptiple strings without writing them. In that case you'd give `sprintf()` the following: quotes that look like this "%s" and a string or vector of strings that ought to replace it.
+Yup, we're still not done with Polygons. Labels are cute and not as complicated. Say you wanted to get information about a specific polygon (or the country it represents) whenever you hovered above it. That's what labels do. For the exercise, there are four things you're going to have to know. You'd want your labels to take in not just "Nevada", but any name you give it. This is done with the replacement that the function `sprintf()` offers. Say you wanted to input muptiple strings without writing them. In that case you'd give `sprintf()` the following: quotes that look like this "%s" and a string or vector of strings that ought to replace it.
 
 ```{r}
 countryname <- c("Bulgaria", "Canada", "Singapore", "Russia")
@@ -345,20 +344,18 @@ Bulgaria is number 1
 **with** 0.563
 Canada ...
 
-Don't worry too much about the specifics. This is a bit of HTML you're learning right now. You'll need it for the exercise, but don't worry about actually understanding it.
-
 You can also set labelOptions. To do so, you add the variable to your `addPolygons()`. Several of note are `style`, which uses a list of css (HTML) style additions, which we haven't studied in this course. We'll provide them for the exercise. `textsize`... well, figure it out. `direction` tells the label which way to open. Leaving it to "auto" is fine. Meanwhile, with `labelOptions()` you can also make labels clickable, interactive... it's quite cool, I recommend you check out `?labelOptions()` for more info. You'll only need the above for the exercise though.
 
 
 
-####Highlight
+##### Highlight
 
 Finally, highlighting. It just makes things look good. When you put your cursor over a specific country, you want that country to be highlighted. We do so by saying `highlight = highlightOptions()` and setting up the variables in `highlightOptions()`. Much like `addPolygons()` itself, `highlightOptions` takes `weight`, `color` and `dashArray` and `fillOpacity`. `fillOpacity` here defines how opaque the highlight should be. So setting `fillOpacity` to 0 will result in an almost completely white cover over the initial polygon. Meanwhile, a `fillOpacity` of 1 will not alter the initial colour at all. It takes all the other standard ones, but these are the ones you'll likely need.
 
 The reason highlight is so cool is because all those variables (weight, fillOpacity etc.) will only materialize over a polygon whenever you move your cursor over that polygon.
 
 
-#Legends
+# Legends
 
 Adding a legend to your map is another way to increase its usefulness and visual appeal. The process for adding them is much like other legends we have done in the past using other packages.
 
@@ -367,13 +364,13 @@ Adding a legend to your map is another way to increase its usefulness and visual
 
 # Additional Features
 
-While we wish we could have continued to write our report on all the wonderful and awesome features of leaflet(), we unfortunately will not be able to cover everything. 
+While we wish we could have continued to write our report on all the wonderful and awesome features of `leaflet()`, we unfortunately will not be able to cover everything. 
 
-In case you are wanting to explore leaflet() further, we wanted to give you a few insights into additional features that can help improve your data analysis and visualization further. 
+In case you are wanting to explore `leaflet()` further, we wanted to give you a few insights into additional features that can help improve your data analysis and visualization further. 
 
 1. Show/Hide Layers: you can group your data and enable a Interactive Layer Display. When you click the button on the display, it'll populate the map with the corresponding data. 
 
 2. Raster Images: According to Techopedia, Raster graphics, also called bitmap graphics, are digital images that are composed of tiny rectangular pixels, or picture elements, that are arranged in a grid or raster of x and y coordinates in such a way that it forms an image. You can use Raster Images in order to display an additional piece of data, such as looking at the average temperatures in a given month across a specific geographical area while presenting another data variable.
 
-3. Using Shiny with leaflet(): Shiny is another R package that hat makes it easy to build interactive web apps.
+3. Using Shiny with `leaflet()`: Shiny is another R package that hat makes it easy to build interactive web apps.
 
