@@ -63,7 +63,7 @@ m <- leaflet(spdf) %>%
       dashArray = "",
       fillOpacity = 0.7,
       bringToFront = TRUE))
-?leaflet()
+
 labels <- sprintf(
   "<strong>%s</strong><br/>CO<sub>2</sub> levels: %g",
   spdf$Country, spdf$CO2
