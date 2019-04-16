@@ -309,6 +309,7 @@ labels <-
   sprintf("%s is number %d <br/><strong>with</strong> %g", countryname, decimal, float) %>% 
   lapply(htmltools::HTML)
 
+
 ```
 
 The above would output the following, but only in an html widget:

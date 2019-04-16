@@ -69,9 +69,6 @@ labels <- sprintf(
   spdf$Country, spdf$CO2
 ) %>% lapply(htmltools::HTML)
 
-rr <- tags$div(
-   HTML('<a href="https://cran.r-project.org/"> <img border="0" alt="ImageTitle" src="/PathToImage/ImageR.jpeg" width="300" height="100"> </a>')
- )
 
 m <- leaflet(spdf, height = 512, width = 768) %>%
   setView(lng = 0, lat = 0, zoom = 1) %>%
@@ -98,13 +95,10 @@ m <- leaflet(spdf, height = 512, width = 768) %>%
 m <- m %>% addLegend(pal = pal, values = ~CO2, opacity = 0.7, title = "CO<sub>2</sub> Emissions in mill",
                 position = "bottomleft")
 
-rr <- tags$div(
-   HTML('<a href="https://cran.r-project.org/"> <img border="0" alt="ImageTitle" src="/PathToImage/ImageR.jpeg" width="300" height="100"> </a>')
- )
 
-rr <- tags$div(HTML("CO<sub>2</sub> Emissions around the Globe in 2014"))
+title <- tags$div(HTML("CO<sub>2</sub> Emissions around the Globe in 2014"))
 
-m <- m %>% addControl(rr, position = "topright")
+m <- m %>% addControl(title, position = "topright")
 m
 ```
 
@@ -179,5 +173,48 @@ leaflet(options =
                        ))) %>%
   addGraticule(style= list(color= '#999', weight= 0.5, opacity= 1)) %>%
   addGraticule(sphere = TRUE, style= list(color= '#777', weight= 1, opacity= 0.25))
+
+
+
+
+
+
+minZoom = 0
+maxZoom = 13
+resolutions <- 0.42*(2^(maxZoom:minZoom))
+
+epsg28992 <- leafletCRS(crsClass = 'L.Proj.CRS.TMS', code = 'EPSG:28992',
+                       proj4def = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.417,50.3319,465.552,-0.398957,0.343988,-1.8774,4.0725 +units=m +no_defs',
+                       resolutions = resolutions,
+                       projectedBounds = c(-285401.92, 22598.08, 595401.9199999999, 903401.9199999999))
+
+leaflet() %>% leaflet(options = leafletOptions(
+                                  crs = epsg28992, 
+                                  minZoom = minZoom, maxZoom = maxZoom)) %>%
+  setView(5.092098, 52.093992, zoom = 4) %>%
+  addTiles('http://geodata.nationaalgeoregister.nl/tms/1.0.0/brtachtergrondkaart/{z}/{x}/{y}.png', options = tileOptions(tms=TRUE))
+
+
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+```
+
+
+
+
+```{r}
+library(tmap)
+spdf2 <- spTransform(spdf, CRS = CRS("+proj=gall"))
+data(World)
+map <- tm_shape(World, projection ="gall") +
+  tm_polygons(title = "Gall") 
+
+leaflet(spdf2, options =
+               leafletOptions(
+                 crs=leafletCRS(crsClass="L.Proj.CRS", code="ESRI:54016",
+                                proj4def= "+proj=gall +ellps=WGS84",
+                                resolutions = c(65536, 32768, 16384, 8192, 4096, 2048)
+                                ))) %>%  addTiles(map)
 ```
 

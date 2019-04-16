@@ -1,6 +1,8 @@
 ---
 title: "Leaflet In Class Exercises"
-author: "Swarnima Sircar"
+author: 
+  - "Swarnima Sircar, Gabriel Petrov, Chandler Beyer"
+  - "Aiman Imtiaz, Terence Choo, Haaken Bungum"
 date: "13/04/2019"
 output: pdf_document
 ---
@@ -19,101 +21,61 @@ library(htmlwidgets)
 library(htmltools)
 ```
 
+##Task 0
 Set the working directory to your folder containing the "CAIT Country CO2 Emissions" csv file.
-```{r}
-# Task 0
 
-```
 
-Load the emissions data here. You may use the code from exercise 17 of this class. 
-Use `countrycode()` to add a column with ISO Alpha-3 country codes to the data frame. Then, using `joinCountryData2Map()`, turn the data frame into a spatial data frame.
-```{r}
-# Task 1
+##Task 1
+Load the emissions data here. You may use the code from exercise 17 of this class. Use `countrycode()` to add a column with ISO Alpha-3 country codes to the data frame. Then, using `joinCountryData2Map()`, turn the data frame into a spatial data frame. We'll be looking at 2014 again this time.
 
-```
 
-Set the colour palette to the one we've been using in class. 
-```{r}
-# Task 2
+##Task 2
+Let us draw our basic world map. Use the `leaflet()` function. Edit `setView()` to position the map so that when it loads, we only see Singapore. After doing so, zoom out and inspect the map. Try adding the polygons created by your spdf.
 
-```
 
-Let us draw our basic world map. Use the `leaflet()` function  The basic recipe is already below.
-Edit `setView()` to position the map so that when it loads, we only see Singapore. 
-```{r, eval=FALSE}
-# Task 3
-m <- leaflet(spdf) %>%
-  setView() %>%
-  addTiles() %>%
-  addPolygons()
-m
-```
-Now zoom out and inspect the map. As you can see, it has the borders of all the countries, and you can move around. 
-
+##Task 3
 Let us now add some colour to the map. 
- - We want the break points we used in our previous maps. As the notes noted, there are more than 9 bins R's ColorBrewer Palette. Write a `pal` so that the colour gradient of our palette separates at the following points: `(0, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000)`. Refer to the notes to remind yourself how `pal` works.
- - Set the fill opacity to 0.7
- - Make the blue nation borders  thicker to an appropriate degree, opaque, white, and dashed.
-```{r, eval=FALSE}
-# Task 4
+ - We want the break points we used in our previous maps. As the notes noted, there are more than 9 bins RColorBrewer's Palette. Write a `pal` so that the colour gradient of our palette separates at the points specified by `breaks` in Prof's code. Refer to the notes to remind yourself how `pal` works.
+ - Set the fill opacity to something that looks good
+ - Make the nation borders thicker with an appropriate degree, opaqueness and color. White worked well for us. Experiment with different types of dashed patterns.
 
-# Cut points for turning numerical values into categories on the map.
-breaks <- c(0, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000)
-pal <- 
-  
-```
 
-Our map now looks something like what we want. But we want to make the polygons highlight as we pass over them. Hint: the `addPolygons()` function has a `highlight` function. Play around with it. We want to highlight it such that when our mouse hovers over a particular country, the lines are
- - grey (\#666)
+
+##Task 4
+Our map now looks something like what we want. But we want to make the polygons to highlight as we pass over them. Hint: Check the readings. Play around with it. We want to highlight it such that when our mouse hovers over a particular country, the borders are
+ - some color. grey looked good, but feel free to experiment with different hexadecimals
  - thicker (choose a value that is pleasing to the eye)
- - opaque
- - the lines come to the front
-(Note that each `addPolygons()` function writes over itself, so you have to keep reproducing your code from above.)
-```{r}
-# Task 5
-
-```
+ - We want the highlight itself (i.e. not the borders) to be somewhat opaque
 
 
-To populate this map and actually make it useful, to us create some data labels. 
-`sprintf` is a function that returns a character vector containing a formatted combination of text and variable values. 
- - `%s` and `%g%` simply reference the data values we want to put into the labels.
- - `<br/>` inserts a line break
- - `<sub>2</sub>` makes the "2" print as subscript.
- - Optional: Figure out how to make the country names print in bold.
-We pass it through `lapply(htmltools::HTML)` so that Leaflet knows to treat each label as HTML instead of as plain text.
-```{r, eval=FALSE}
-# Task 6
-labels <- sprintf(
-  "<strong>%s</strong><br/>CO<sub>2</sub> levels: %g",
-  spdf$Country, spdf$CO2) %>% 
-  lapply(htmltools::HTML)
-```
-
-Add the labels to your map. (Note that each `addPolygons()` function writes over itself, so you have to keep reproducing your code from above.)
-Optional: play around with the `labelOptions()`, set the text size to 15px, set a preferred direction, and more.
-```{r}
-# Task 7
-
-```
+##Task 5
+To populate this map and actually make it useful, let us create some data labels. We would like every time we go over a country to get a label which has - on the first line - that country's name and on the second it ought to say "CO$_2$ levels: X", where X is that specific country's CO$_2$ output for 2014. Create a variable `labels` of class "list" that contains all of these variables. Pass it through html, so that Leaflet knows to treat each label as HTML instead of as plain text.
 
 
-Let us now add a legend to our map. Use the `addLegend()` function. Set its opacity to 0.7, give it a meaningful title and position it in the bottom left of your map. 
-```{r}
-# Task 8
 
-```
+##Task 6
+Add the labels to your map.
+Optional: play around with the `labelOptions()`, set the text size to something appropriate, set a preferred direction, and more. Here's a bit of HTML also that you can add to the variable "style":
 
-Give the map a title using the following recipe. Use the `addControl` function to add it to the top right of the map.
-```{r, eval=FALSE}
-# Task 9
-rr <- tags$div(HTML("CO<sub>2</sub> Emissions around the Globe in 2014"))
-m <- m %>% addControl()
-m
-```
+`style = list("font-weight" = "normal", padding = "3px 8px")`
 
+We encourage you to play around with it.
+
+
+
+##Task 7
+Let us now add a legend to our map. Use the `addLegend()` function. Set its opacity to something nice, give it a meaningful title and position it in an appropriate position on your map. 
+
+
+##Task 8
+Give the map a title using the following recipe. Use the `addControl` function to add it to the top right of the map. You may need to load a couple of libraries. Make the title say "CO$_2$ Emissions around the Globe in 2014". Hint: Google how to add a title in `leaflet()`. Look for `tags$div`.
+
+###Bonus:
+Hmmmmm... Something's not quite right. You see that disgusting grey area on top? And notice where our title is. It's outside the map! It's like one of those movies that don't quite fit the screen. Terrible. How would we change that? Consult our group's representative for a hint, but we're curious as to what you'll come up with on your own. If we're low on time, he'll help you out once you get here. But try and have an idea first. The way you should be checking whether it works is by kniting, not in your .Rmd file.
+
+N.B. You may have to copy some of your previous code, but seeing as we were going to make you do that anyway below, why not just go ahead and do so now.
+
+
+##Task 9
 And that's all! 
 Combine and add comments to all your code here.
-```{r}
-# Task 10
-```
