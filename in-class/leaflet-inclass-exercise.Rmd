@@ -78,4 +78,6 @@ N.B. You may have to copy some of your previous code, but seeing as we were goin
 
 ##Task 9
 And that's all! 
-Combine and add comments to all your code here.
+Combine and add comments to all your code here. Should look something like Figure 1 below.
+
+![Result](Result.png){width=600px}
