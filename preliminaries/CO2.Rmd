@@ -70,7 +70,7 @@ labels <- sprintf(
 ) %>% lapply(htmltools::HTML)
 
 
-m <- leaflet(spdf, height = 512, width = 768) %>%
+m <- leaflet(spdf, height = 512, width = 768) %>% # Multiples of 256
   setView(lng = 0, lat = 0, zoom = 1) %>%
   addTiles() %>%
   addPolygons(
@@ -81,8 +81,8 @@ m <- leaflet(spdf, height = 512, width = 768) %>%
     dashArray = "3",
     fillOpacity = 0.7,
     highlight = highlightOptions(
-      weight = 5,
-      color = "#666",
+      weight = 2,
+      color = "black",
       dashArray = "",
       fillOpacity = 0.7,
       bringToFront = TRUE), 
@@ -90,10 +90,12 @@ m <- leaflet(spdf, height = 512, width = 768) %>%
     labelOptions = labelOptions(
       style = list("font-weight" = "normal", padding = "3px 8px"),
       textsize = "15px",
-      direction = "auto"))
-
-m <- m %>% addLegend(pal = pal, values = ~CO2, opacity = 0.7, title = "CO<sub>2</sub> Emissions in mill",
-                position = "bottomleft")
+      direction = "auto")) %>% 
+  addLegend(pal = pal, 
+            values = ~CO2, 
+            opacity = 0.7, 
+            title = "Metric Tons of CO<sub>2</sub>",
+            position = "bottomleft")
 
 
 title <- tags$div(HTML("CO<sub>2</sub> Emissions around the Globe in 2014"))
